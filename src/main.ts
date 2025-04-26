@@ -1,5 +1,3 @@
-#!/usr/bin/env deno run
-
 import { select } from "@inquirer/prompts";
 import { hevcCompressor } from "./ffmpeg.ts";
 
