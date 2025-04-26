@@ -41,9 +41,10 @@ export async function hevcCompressor() {
 
   const cmd = new Deno.Command("ffmpeg", {
     args: [
-      "-hide_banner",
       "-loglevel",
-      "error",
+      "0",
+      "-hide_banner",
+      "-nostats",
       "-i",
       inPath,
       "-c:v",
@@ -56,7 +57,6 @@ export async function hevcCompressor() {
       "copy",
       "-progress",
       "pipe:1", // :contentReference[oaicite:2]{index=2}
-      "-nostats",
       outPath,
     ],
     stdout: "piped",
@@ -94,7 +94,7 @@ export async function hevcCompressor() {
   }
 
   const { code } = await proc.status;
-  
+
   await bars.end();
 
   Deno.exit(code);

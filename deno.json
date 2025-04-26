@@ -3,8 +3,7 @@
     "@deno-library/progress": "jsr:@deno-library/progress@^1.5.1",
     "@inquirer/prompts": "npm:@inquirer/prompts@^7.5.0",
     "@std/path": "jsr:@std/path@^1.0.9",
-    "hono": "jsr:@hono/hono@^4.7.6",
-    "sharp": "npm:sharp@^0.34.1"
+    "hono": "jsr:@hono/hono@^4.7.6"
   },
   "tasks": {
     "start": "deno run --allow-read --allow-write --allow-env --allow-run ./src/main.ts"
