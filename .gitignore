@@ -1,0 +1,7 @@
+.qodo
+node_modules
+public
+.DS_Store
+.env
+/node_modules/
+/node_modules/*
