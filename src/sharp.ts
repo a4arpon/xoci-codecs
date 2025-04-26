@@ -1,1 +1,1 @@
-console.log("Image compressor coming soon.");
+console.log("Image compressor coming soon.")

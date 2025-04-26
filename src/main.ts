@@ -1,5 +1,5 @@
-import { select } from "@inquirer/prompts";
-import { hevcCompressor } from "./ffmpeg.ts";
+import { select } from "@inquirer/prompts"
+import { hevcCompressor } from "./ffmpeg.ts"
 
 const choice = await select({
   message: "Menu",
@@ -7,10 +7,10 @@ const choice = await select({
     { name: "Image Compressor (sharp)", value: "img" },
     { name: "HEVC Video Compressor", value: "hevc" },
   ],
-});
+})
 
 if (choice === "hevc") {
-  await hevcCompressor();
+  await hevcCompressor()
 } else {
-  console.log("Image compressor coming soon.");
+  console.log("Image compressor coming soon.")
 }

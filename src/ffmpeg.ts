@@ -1,6 +1,6 @@
-import { input } from "@inquirer/prompts";
-import { MultiProgressBar } from "@deno-library/progress";
-import { join, parse } from "@std/path";
+import { input } from "@inquirer/prompts"
+import { MultiProgressBar } from "@deno-library/progress"
+import { join, parse } from "@std/path"
 
 // probe total seconds
 async function getDurationSeconds(path: string): Promise<number> {
@@ -18,26 +18,26 @@ async function getDurationSeconds(path: string): Promise<number> {
     ],
     stdout: "piped",
     stderr: "null",
-  });
-  const { stdout } = await p.output();
-  return parseFloat(new TextDecoder().decode(stdout).trim());
+  })
+  const { stdout } = await p.output()
+  return parseFloat(new TextDecoder().decode(stdout).trim())
 }
 
 export async function hevcCompressor() {
-  const inPath = await input({ message: "Input video path:" });
-  const outPathInput = await input({ message: "Output file path:" });
+  const inPath = await input({ message: "Input video path:" })
+  const outPathInput = await input({ message: "Output file path:" })
 
-  const { name, ext } = parse(inPath);
-  const outPath = join(outPathInput, `${name}__HEVC_xoci${ext}`);
+  const { name, ext } = parse(inPath)
+  const outPath = join(outPathInput, `${name}__HEVC_xoci${ext}`)
 
-  const duration = await getDurationSeconds(inPath);
+  const duration = await getDurationSeconds(inPath)
 
   const bars = new MultiProgressBar({
     title: "HEVC Compression",
     complete: "=",
     incomplete: "-",
     display: "[:bar] :text :percent :time :completed/:total",
-  });
+  })
 
   const cmd = new Deno.Command("ffmpeg", {
     args: [
@@ -61,41 +61,41 @@ export async function hevcCompressor() {
     ],
     stdout: "piped",
     stderr: "inherit",
-  });
+  })
 
-  const proc = cmd.spawn();
-  const reader = proc.stdout.getReader();
-  const dec = new TextDecoder();
-  let buf = "";
-  let lastTime = 0;
+  const proc = cmd.spawn()
+  const reader = proc.stdout.getReader()
+  const dec = new TextDecoder()
+  let buf = ""
+  let lastTime = 0
 
   while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buf += dec.decode(value, { stream: true });
-    let idx;
+    const { value, done } = await reader.read()
+    if (done) break
+    buf += dec.decode(value, { stream: true })
+    let idx
     while ((idx = buf.indexOf("\n")) !== -1) {
-      const line = buf.slice(0, idx).trim();
-      buf = buf.slice(idx + 1);
-      const [k, v] = line.split("=");
+      const line = buf.slice(0, idx).trim()
+      buf = buf.slice(idx + 1)
+      const [k, v] = line.split("=")
       if (k === "out_time_ms") {
         lastTime = Math.min(
           Math.ceil(Number(v) / 1_000_000),
           Math.ceil(duration),
-        );
+        )
       }
 
       if (k === "progress" && v === "continue") {
         await bars.render([
           { completed: lastTime, total: Math.ceil(duration), text: "Time(s)" },
-        ]);
+        ])
       }
     }
   }
 
-  const { code } = await proc.status;
+  const { code } = await proc.status
 
-  await bars.end();
+  await bars.end()
 
-  Deno.exit(code);
+  Deno.exit(code)
 }

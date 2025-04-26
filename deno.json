@@ -1,4 +1,9 @@
 {
+  "fmt": {
+    "lineWidth": 80,
+    "semiColons": false,
+    "useTabs": false
+  },
   "imports": {
     "@deno-library/progress": "jsr:@deno-library/progress@^1.5.1",
     "@inquirer/prompts": "npm:@inquirer/prompts@^7.5.0",
@@ -6,9 +11,10 @@
     "hono": "jsr:@hono/hono@^4.7.6"
   },
   "tasks": {
-    "start": "deno run --allow-read --allow-write --allow-env --allow-run ./src/main.ts"
+    "start": "deno run --allow-read --allow-write --allow-env --allow-run ./src/main.ts",
+    "compile": "deno compile --output xoci-codec --node-modules-dir=false --allow-read --allow-write --allow-env --allow-run ./src/main.ts"
   },
-  "nodeModulesDir":"auto",
+  "nodeModulesDir": "auto",
   "compilerOptions": {
     "strict": true
   }
