@@ -23,12 +23,49 @@ async function getDurationSeconds(path: string): Promise<number> {
   return parseFloat(new TextDecoder().decode(stdout).trim())
 }
 
-export async function hevcCompressor() {
+const COMPRESSOR_ARGS = {
+  slow: [
+    "-loglevel",
+    "0",
+    "-hide_banner",
+    "-nostats",
+    "-c:v",
+    "libx265",
+    "-preset",
+    "slow",
+    "-crf",
+    "20",
+    "-c:a",
+    "copy",
+    "-progress",
+    "pipe:1", // :contentReference[oaicite:2]{index=2}
+  ],
+  faster: [
+    "-loglevel",
+    "0",
+    "-hide_banner",
+    "-nostats",
+    "-c:v",
+    "libx265",
+    "-preset",
+    "veryfast",
+    "-crf",
+    "0",
+    "-c:a",
+    "copy",
+    "-progress",
+    "pipe:1", // :contentReference[oaicite:2]{index=2}
+  ],
+}
+
+export async function hevcCompressor(faster: boolean) {
   const inPath = await input({ message: "Input video path:" })
   const outPathInput = await input({ message: "Output file path:" })
 
   const { name, ext } = parse(inPath)
-  const outPath = join(outPathInput, `${name}__HEVC_xoci${ext}`)
+  const outPath = faster
+    ? outPathInput
+    : join(outPathInput, `${name}__HEVC_xoci${ext}`)
 
   const duration = await getDurationSeconds(inPath)
 
@@ -40,25 +77,7 @@ export async function hevcCompressor() {
   })
 
   const cmd = new Deno.Command("ffmpeg", {
-    args: [
-      "-loglevel",
-      "0",
-      "-hide_banner",
-      "-nostats",
-      "-i",
-      inPath,
-      "-c:v",
-      "libx265",
-      "-preset",
-      "slow",
-      "-crf",
-      "20",
-      "-c:a",
-      "copy",
-      "-progress",
-      "pipe:1", // :contentReference[oaicite:2]{index=2}
-      outPath,
-    ],
+    args: [inPath, ...COMPRESSOR_ARGS[faster ? "faster" : "slow"], outPath],
     stdout: "piped",
     stderr: "inherit",
   })
